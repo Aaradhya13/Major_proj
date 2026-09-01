@@ -2,10 +2,10 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { stageDistribution } from '../../data/mockData.js'
 
 const stageColors = {
-  Normal: '#6aa886',
-  'Very Mild': '#6f9fc4',
-  Mild: '#d6a45d',
-  Moderate: '#c77b7b',
+  Normal: '#059669',
+  'Very Mild': '#0284c7',
+  Mild: '#d97706',
+  Moderate: '#e11d48',
 }
 
 const totalCases = stageDistribution.reduce(
@@ -19,7 +19,7 @@ function getPercentage(count) {
 
 function StageDistribution() {
   return (
-    <section className="flex min-h-64 h-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+    <section className="dashboard-card-rise flex h-full min-h-64 flex-col rounded-xl border border-white/70 bg-white/56 p-6 shadow-[0_18px_55px_rgba(30,64,175,0.09)] ring-1 ring-slate-200/60 backdrop-blur-xl sm:p-7">
       <div>
         <h2 className="text-lg font-semibold tracking-tight text-blue-950">
           Alzheimer&apos;s Stage Distribution
@@ -29,7 +29,7 @@ function StageDistribution() {
         </p>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6 sm:flex-row sm:gap-8">
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6 sm:flex-row sm:gap-8 xl:flex-col 2xl:flex-row">
         <div className="relative h-52 w-full max-w-[13rem] shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

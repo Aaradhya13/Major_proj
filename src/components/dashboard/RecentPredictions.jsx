@@ -21,7 +21,7 @@ function RecentPredictions() {
   const navigate = useNavigate()
 
   return (
-    <section className="flex min-h-64 flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+    <section className="dashboard-card-rise flex min-h-64 flex-col rounded-xl border border-white/70 bg-white/56 p-6 shadow-[0_18px_55px_rgba(30,64,175,0.09)] ring-1 ring-slate-200/60 backdrop-blur-xl sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -41,16 +41,16 @@ function RecentPredictions() {
         </button>
       </div>
 
-      <div className="mt-6 flex-1">
+      <div className="mt-6 flex-1 overflow-hidden rounded-lg border border-slate-100">
         {recentPredictions.slice(0, 5).map((prediction, index) => (
           <div
             key={prediction.id}
-            className={`flex min-h-20 items-center gap-3 py-4 transition-colors hover:bg-slate-50/80 sm:gap-4 ${
+            className={`group flex min-h-20 items-center gap-3 px-3 py-4 transition-all duration-300 hover:bg-sky-50/70 sm:gap-4 ${
               index === 0 ? '' : 'border-t border-slate-100'
             }`}
           >
             <div className="flex min-w-0 flex-1 items-center gap-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-900 ring-1 ring-inset ring-blue-100">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-900 ring-1 ring-inset ring-blue-100 transition-transform duration-300 group-hover:scale-110">
                 {getInitials(prediction.patientName)}
               </span>
               <div className="min-w-0">

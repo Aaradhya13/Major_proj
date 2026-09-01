@@ -29,7 +29,7 @@ function RecentActivity() {
   const navigate = useNavigate()
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7 xl:col-span-2">
+    <section className="dashboard-card-rise rounded-xl border border-white/70 bg-white/56 p-6 shadow-[0_18px_55px_rgba(30,64,175,0.09)] ring-1 ring-slate-200/60 backdrop-blur-xl sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -56,11 +56,11 @@ function RecentActivity() {
           return (
             <li
               key={activity.id}
-              className={`${index === 0 ? '' : 'border-t border-slate-100'} transition-colors hover:bg-slate-50/80`}
+              className={`${index === 0 ? '' : 'border-t border-slate-100'} group rounded-lg transition-all duration-300 hover:bg-sky-50/70`}
             >
-              <div className="flex min-h-20 items-start gap-3 py-4 sm:gap-4">
+              <div className="flex min-h-20 items-start gap-3 px-1 py-4 sm:gap-4">
                 <span
-                  className={`flex size-10 shrink-0 items-center justify-center rounded-full ${activityIconStyles[activity.type]}`}
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110 ${activityIconStyles[activity.type]}`}
                 >
                   <Icon size={19} strokeWidth={2} aria-hidden="true" />
                 </span>
