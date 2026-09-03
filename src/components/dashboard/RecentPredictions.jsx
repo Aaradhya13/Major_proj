@@ -21,7 +21,7 @@ function RecentPredictions() {
   const navigate = useNavigate()
 
   return (
-    <section className="dashboard-card-rise flex min-h-64 flex-col rounded-xl border border-white/70 bg-white/56 p-6 shadow-[0_18px_55px_rgba(30,64,175,0.09)] ring-1 ring-slate-200/60 backdrop-blur-xl sm:p-7">
+    <section className="dashboard-card-rise flex min-h-64 flex-col rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">

@@ -26,7 +26,7 @@ function getInitials(name) {
 
 function InfoCard({ label, value, stage }) {
   return (
-    <article className="rounded-lg border border-slate-200 bg-white px-4 py-4 shadow-sm">
+    <article className="rounded-lg border border-white/60 bg-white/60 px-4 py-4 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
       <p className="text-xs font-medium text-slate-500">{label}</p>
       {stage ? (
         <span
@@ -113,7 +113,7 @@ function PatientDetails() {
       </section>
 
       <section className="grid items-start gap-5 xl:grid-cols-[1.35fr_1fr]">
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -169,7 +169,7 @@ function PatientDetails() {
           </div>
         </article>
 
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">
             Clinical Summary
           </h2>

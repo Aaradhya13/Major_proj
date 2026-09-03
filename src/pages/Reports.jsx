@@ -5,6 +5,7 @@ import {
   downloadAnalysisReport,
   toDisplayAnalysisId,
 } from '../utils/reportGenerator.js'
+import PageBackground from '../components/layout/PageBackground.jsx'
 
 const stageStyles = {
   Normal: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -44,7 +45,8 @@ function Reports() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-7">
+    <PageBackground>
+      <div className="mx-auto max-w-7xl space-y-7">
       <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-blue-950 sm:text-3xl">
@@ -61,7 +63,7 @@ function Reports() {
       </section>
 
       {analysisHistory.length === 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center shadow-md">
+        <section className="rounded-xl border border-white/60 bg-white/60 px-6 py-16 text-center shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
           <FileText size={36} className="mx-auto text-slate-300" aria-hidden="true" />
           <h2 className="mt-4 text-lg font-semibold text-blue-950">
             No reports yet
@@ -71,7 +73,7 @@ function Reports() {
           </p>
         </section>
       ) : (
-        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-md">
+        <section className="overflow-hidden rounded-xl border border-white/60 bg-white/60 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
           <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
             <h2 className="text-lg font-semibold tracking-tight text-blue-950">
               Analysis Reports
@@ -157,7 +159,8 @@ function Reports() {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </PageBackground>
   )
 }
 

@@ -1,6 +1,7 @@
 import { Eye, Filter, Plus, Search } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { patients } from '../data/mockData.js'
+import PageBackground from '../components/layout/PageBackground.jsx'
 
 const stageStyles = {
   Normal: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -25,7 +26,7 @@ function getInitials(name) {
 
 function SummaryCard({ label, value }) {
   return (
-    <article className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+    <article className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
       <p className="text-xs font-medium text-slate-500">{label}</p>
       <p className="mt-1.5 text-xl font-semibold tracking-tight text-blue-950">
         {value}
@@ -38,7 +39,8 @@ function Patients() {
   const navigate = useNavigate()
 
   return (
-    <div className="mx-auto max-w-7xl space-y-7">
+    <PageBackground>
+      <div className="mx-auto max-w-7xl space-y-7">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-blue-950 sm:text-3xl">
@@ -64,7 +66,7 @@ function Patients() {
         ))}
       </section>
 
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-md">
+      <section className="overflow-hidden rounded-xl border border-white/60 bg-white/60 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
         <div className="flex flex-col gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <label className="relative block w-full sm:max-w-md">
             <span className="sr-only">Search patients</span>
@@ -186,7 +188,8 @@ function Patients() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </PageBackground>
   )
 }
 

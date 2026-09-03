@@ -132,7 +132,7 @@ function PredictionResult() {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-2">
-        <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-slate-500">
@@ -185,7 +185,7 @@ function PredictionResult() {
           </dl>
         </article>
 
-        <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -220,7 +220,7 @@ function PredictionResult() {
         </article>
       </section>
 
-      <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+      <article className="rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
         <h2 className="text-lg font-semibold tracking-tight text-blue-950">
           AI Assessment
         </h2>
@@ -241,7 +241,7 @@ function PredictionResult() {
         </p>
       </article>
 
-      <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-md sm:p-7">
+      <article className="rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">
             Stage Probability Breakdown

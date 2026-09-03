@@ -1,6 +1,7 @@
 import { Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { analysisHistory, patients } from '../data/mockData.js'
+import PageBackground from '../components/layout/PageBackground.jsx'
 
 const stageStyles = {
   Normal: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -13,7 +14,8 @@ function History() {
   const navigate = useNavigate()
 
   return (
-    <div className="mx-auto max-w-7xl space-y-7">
+    <PageBackground>
+      <div className="mx-auto max-w-7xl space-y-7">
       <section>
         <h1 className="text-2xl font-semibold tracking-tight text-blue-950 sm:text-3xl">
           Prediction History
@@ -22,7 +24,7 @@ function History() {
           Review completed MRI analyses across your clinical workspace.
         </p>
       </section>
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-md">
+      <section className="overflow-hidden rounded-xl border border-white/60 bg-white/60 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
@@ -68,7 +70,8 @@ function History() {
           </table>
         </div>
       </section>
-    </div>
+      </div>
+    </PageBackground>
   )
 }
 

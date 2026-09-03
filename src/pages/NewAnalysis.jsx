@@ -13,6 +13,7 @@ import {
   patients,
   updateMockAnalysisPreview,
 } from '../data/mockData.js'
+import PageBackground from '../components/layout/PageBackground.jsx'
 
 function formatFileSize(bytes) {
   if (bytes < 1024 * 1024) {
@@ -106,11 +107,12 @@ function NewAnalysis() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mx-auto max-w-7xl space-y-7"
-      aria-busy={isAnalyzing}
-    >
+    <PageBackground>
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto max-w-7xl space-y-7"
+        aria-busy={isAnalyzing}
+      >
       <section>
         <h1 className="text-2xl font-semibold tracking-tight text-blue-950 sm:text-3xl">
           New MRI Analysis
@@ -122,7 +124,7 @@ function NewAnalysis() {
 
       <fieldset disabled={isAnalyzing} className="space-y-7 border-0 p-0">
         <section className="grid gap-5 xl:grid-cols-2">
-          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+          <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
             <h2 className="text-lg font-semibold tracking-tight text-blue-950">
               Patient Information
             </h2>
@@ -174,7 +176,7 @@ function NewAnalysis() {
             </button>
           </article>
 
-          <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+          <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
             <h2 className="text-lg font-semibold tracking-tight text-blue-950">
               MRI Scan
             </h2>
@@ -239,7 +241,7 @@ function NewAnalysis() {
           </article>
         </section>
 
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
           <div className="flex items-center gap-2">
             <FileText size={18} className="text-blue-800" aria-hidden="true" />
             <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -256,7 +258,7 @@ function NewAnalysis() {
           <p className="mt-2 text-xs text-slate-400">Notes are optional.</p>
         </article>
 
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-md sm:p-6">
+        <article className="rounded-xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
           <h2 className="text-lg font-semibold tracking-tight text-blue-950">
             Analysis Settings
           </h2>
@@ -295,7 +297,8 @@ function NewAnalysis() {
           {isAnalyzing ? 'Analyzing MRI scan...' : 'Run AI Analysis'}
         </button>
       </div>
-    </form>
+      </form>
+    </PageBackground>
   )
 }
 

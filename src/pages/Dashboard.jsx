@@ -88,7 +88,7 @@ const teamLoad = [
 function StatCard({ label, value, trend, tone, icon: Icon, index }) {
   return (
     <article
-      className="dashboard-card-rise group rounded-2xl border border-white/60 bg-white/20 p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ring-1 ring-white/40 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/28 hover:shadow-[0_12px_24px_rgba(71,85,105,0.06)]"
+      className="dashboard-card-rise group rounded-2xl border border-white/60 bg-white/60 p-4 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/65 hover:shadow-[0_6px_18px_rgba(15,23,42,0.06)]"
       style={{ animationDelay: `${index * 70}ms` }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -114,12 +114,12 @@ function Dashboard() {
 
   return (
     <div
-      className="-m-4 min-h-[calc(100vh-5rem)] bg-cover bg-center bg-no-repeat p-4 sm:-mx-6 sm:-my-6 sm:p-6 lg:-mx-8 lg:-mb-10 lg:-mt-7 lg:p-8"
-      style={{ backgroundImage: `url(${hospitalNeuralBg})` }}
+      className="relative isolate -m-4 min-h-[calc(100vh-5rem)] bg-cover bg-center bg-fixed bg-no-repeat p-4 sm:-mx-6 sm:-my-6 sm:p-6 lg:-mx-8 lg:-mb-10 lg:-mt-7 lg:p-8"
+      style={{ backgroundImage: `url(${hospitalNeuralBg})`, backgroundAttachment: 'fixed' }}
     >
-      <div className="mx-auto max-w-7xl rounded-3xl border border-white/60 bg-white/18 p-4 shadow-[0_20px_60px_rgba(14,116,144,0.12)] ring-1 ring-white/50 backdrop-blur-lg sm:p-5 lg:p-6">
-        <section className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/15 shadow-[0_12px_40px_rgba(14,116,144,0.08)] ring-1 ring-white/40 backdrop-blur-md">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/25 to-white/5" />
+      <div className="pointer-events-none absolute inset-0 bg-white/75" aria-hidden="true" />
+      <div className="relative z-10 mx-auto max-w-7xl p-4 sm:p-5 lg:p-6">
+        <section className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/60 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div className="relative overflow-hidden p-6 sm:p-8 lg:min-h-[25rem]">
             <div className="dashboard-soft-pulse absolute right-10 top-8 hidden h-28 w-28 rounded-full border border-blue-100 bg-blue-50/45 lg:block" />
@@ -129,7 +129,7 @@ function Dashboard() {
                 <span key={index} className="size-1.5 rounded-full bg-teal-300" />
               ))}
             </div>
-            <div className="dashboard-card-rise relative max-w-3xl rounded-2xl border border-white/60 bg-white/25 p-5 shadow-[0_16px_50px_rgba(15,23,42,0.08)] ring-1 ring-white/50 backdrop-blur-lg sm:p-7">
+            <div className="dashboard-card-rise relative max-w-3xl p-5 sm:p-7">
               <span className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50/90 px-3 py-1 text-xs font-semibold text-teal-800">
                 <Hospital size={14} aria-hidden="true" />
                 Neuro care command center
@@ -162,7 +162,7 @@ function Dashboard() {
             </div>
           </div>
 
-          <aside className="dashboard-card-rise relative m-5 overflow-hidden rounded-2xl border border-white/60 bg-white/20 p-6 shadow-[0_16px_50px_rgba(14,116,144,0.10)] ring-1 ring-white/40 backdrop-blur-lg lg:m-6">
+          <aside className="dashboard-card-rise relative m-5 overflow-hidden rounded-2xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md lg:m-6">
             <div className="absolute -right-10 -top-10 size-40 rounded-full bg-sky-100/60" />
             <div className="absolute -bottom-12 right-14 size-28 rounded-full bg-teal-100/60" />
             <div className="absolute left-6 top-24 h-24 w-24 rounded-full border border-blue-100/70" />
@@ -182,7 +182,7 @@ function Dashboard() {
             </div>
             <div className="relative mt-6 space-y-3">
               {careQueue.map((item) => (
-                <div key={item.label} className="rounded-lg border border-white/70 bg-white/48 p-3 shadow-sm backdrop-blur-xl">
+                <div key={item.label} className="rounded-lg border border-white/60 bg-white/60 p-3 shadow-[0_2px_8px_rgba(15,23,42,0.04)] backdrop-blur-md">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium text-slate-700">{item.label}</span>
                     <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${item.surface}`}>
@@ -214,7 +214,7 @@ function Dashboard() {
         </section>
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <article className="dashboard-card-rise rounded-2xl border border-white/60 bg-white/20 p-5 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ring-1 ring-white/40 backdrop-blur-md sm:p-6">
+          <article className="dashboard-card-rise rounded-2xl border border-white/60 bg-white/60 p-5 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-blue-950">
@@ -248,14 +248,14 @@ function Dashboard() {
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_3px_12px_rgba(15,23,42,0.04)] backdrop-blur-md">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                 <CalendarClock size={17} className="text-blue-800" aria-hidden="true" />
                 Next board review
               </div>
               <p className="mt-1 text-sm text-slate-500">Today, 14:30</p>
             </div>
-            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_3px_12px_rgba(15,23,42,0.04)] backdrop-blur-md">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                 <FileClock size={17} className="text-blue-800" aria-hidden="true" />
                 Median report time
