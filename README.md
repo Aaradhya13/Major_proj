@@ -1,144 +1,250 @@
 # NeuroVision AI
 
-NeuroVision AI is a React frontend for an explainable, AI-assisted clinical decision-support workflow for MRI analysis and Alzheimer's disease stage prediction. It provides a realistic dashboard experience for reviewing patients, running mock MRI assessments, and viewing clinical analysis reports.
+NeuroVision AI is a React + Vite clinical decision-support frontend with a FastAPI backend for authentication and user settings. MRI analysis remains mock data for now; the backend is structured so a future Python ML prediction service can be added separately.
 
-## Features
+## Technology
 
-- Dashboard with clinical activity summaries
-- Patient management and patient selection
-- New MRI analysis workflow
-- MRI file upload with image preview support
-- AI prediction result display
-- Predicted Alzheimer's stage and confidence score
-- Stage probability breakdown
-- AI assessment summary and clinical disclaimer
-- Full MRI scan preview for supported image files
-- Prediction history
-- Clinical analysis reports
-- View and download PDF reports
-- Start a new analysis from result and patient views
+- Frontend: React 19, Vite, Tailwind CSS, React Router
+- Backend: Python, FastAPI, SQLAlchemy, Alembic, Pydantic
+- Database: PostgreSQL 16 running in Docker Compose
+- Authentication: JWT bearer tokens and bcrypt password hashing
 
-## Tech Stack
+## Prerequisites
 
-- React 19
-- JavaScript with JSX
-- Vite 8
-- Tailwind CSS 4 with `@tailwindcss/vite`
-- React Router DOM 7
-- Recharts 3
-- Lucide React
-- ESLint 10
+Install or have available:
 
-The current application uses static mock data and browser session storage for generated analyses. It does not include a backend, database, or external API integration.
+- Node.js and npm
+- Python 3.11 or newer
+- Docker Desktop with Docker Compose
 
-## Project Structure
+PostgreSQL does not need to be installed locally.
 
-```text
-neurovision-ai/
-├── public/                         # Static public assets (currently empty)
-├── src/
-│   ├── assets/                     # Application assets (currently empty)
-│   ├── components/
-│   │   ├── analysis/               # Analysis-related component space
-│   │   ├── common/                 # Shared component space
-│   │   ├── dashboard/              # Dashboard cards, charts, and activity feeds
-│   │   ├── layout/                 # Sidebar, header, and main layout
-│   │   └── patients/               # Patient-related component space
-│   ├── data/
-│   │   └── mockData.js             # Patients, analyses, predictions, and activity data
-│   ├── pages/
-│   │   ├── Dashboard.jsx
-│   │   ├── Patients.jsx
-│   │   ├── PatientDetails.jsx
-│   │   ├── NewAnalysis.jsx
-│   │   ├── PredictionResult.jsx
-│   │   ├── History.jsx
-│   │   ├── Reports.jsx
-│   │   └── Settings.jsx
-│   ├── utils/
-│   │   └── reportGenerator.js      # Browser-generated PDF report utilities
-│   ├── App.jsx                     # BrowserRouter and route definitions
-│   ├── App.css                    # Application-level component styles
-│   ├── index.css                  # Tailwind import and global styles
-│   └── main.jsx                   # React application entry point
-├── eslint.config.js                # ESLint configuration
-├── index.html                     # Vite HTML entry point
-├── package.json                    # Dependencies and npm scripts
-└── vite.config.js                  # Vite, React, and Tailwind plugins
+## First-time Setup
+
+From the repository root:
+
+```powershell
+git clone <repository-url>
+cd neurovision-ai
+
+Copy-Item .env.example .env
+docker compose up -d
+
+cd backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+alembic upgrade head
+python seed.py
 ```
 
-## Getting Started
+The Docker database is exposed on host port `5433`. This project uses `5433` because port `5432` is already used by another local PostgreSQL process on the development machine. PostgreSQL still listens on its normal internal container port `5432`.
 
-### Prerequisites
+The seed command creates this development/demo account if it does not already exist:
 
-- Node.js compatible with the versions required by the installed Vite and ESLint dependencies
-- npm
+```text
+Email:    sarah.mitchell@neurovision.ai
+Password: NeuroVision123!
+```
 
-### Installation
+The password is stored as a bcrypt hash. Do not use this account in production.
 
-```bash
-git clone <repository-url>
-cd <project-folder>
+## Start the Application
+
+Use two terminals.
+
+Terminal 1, from `backend/` with the virtual environment active:
+
+```powershell
+uvicorn app.main:app --reload --port 8001
+```
+
+Terminal 2, from the repository root:
+
+```powershell
 npm install
 npm run dev
 ```
 
-Vite starts the local development server at:
+Open [http://localhost:5173](http://localhost:5173). The frontend calls the API at `http://localhost:8001/api` by default.
 
-[http://localhost:5173](http://localhost:5173)
+### How Frontend and Backend Connect
 
-The project can also be opened at the equivalent loopback URL `http://127.0.0.1:5173`.
+The local request flow is:
 
-## Available Scripts
-
-These scripts are defined in `package.json`:
-
-| Command           | Description                                                     |
-| ----------------- | --------------------------------------------------------------- |
-| `npm run dev`     | Starts the Vite development server with hot module replacement. |
-| `npm run build`   | Creates a production build in `dist/`.                          |
-| `npm run lint`    | Runs ESLint across the project.                                 |
-| `npm run preview` | Serves the production build locally for preview.                |
-
-## Application Routes
-
-The main routes currently include:
-
-- `/dashboard` - Dashboard
-- `/patients` - Patient management
-- `/patients/:id` - Patient details and MRI analysis history
-- `/analysis/new` - New MRI analysis form
-- `/analysis/:id` - Prediction results
-- `/history` - Prediction history
-- `/reports` - Clinical analysis reports
-- `/settings` - Settings placeholder
-
-The root path `/` redirects to `/dashboard`. The legacy `/new-analysis` path redirects to `/analysis/new`.
-
-## Application Workflow
-
-1. Select a patient from the patient picker.
-2. Upload an MRI scan.
-3. Add optional clinical notes.
-4. Run the AI analysis.
-5. View the generated prediction results.
-6. View the full uploaded scan when the file is a supported image format.
-7. Download the generated PDF report.
-
-Generated analyses are added to the in-memory analysis collection and persisted in browser session storage for the current session. They are then available from the patient analysis history, Prediction History, and Reports pages.
-
-## Screenshots
-
-Screenshots are not currently included in the repository. To add them later:
-
-1. Capture the relevant application views from the running development server.
-2. Add the images to a repository folder such as `docs/screenshots/`.
-3. Reference them here with standard Markdown image syntax, for example:
-
-```markdown
-![NeuroVision AI Dashboard](docs/screenshots/dashboard.png)
+```text
+React/Vite:5173
+   -> FastAPI:8001
+      -> PostgreSQL Docker container:5433
 ```
+
+The frontend API client is in `src/services/api.js`. It uses the default URL `http://localhost:8001/api`, sends the JWT as a bearer token, and stores that token in browser `localStorage`. Do not change the backend URL in code for a different machine; create `.env.local` in the repository root instead:
+
+```text
+VITE_API_URL=http://localhost:8002/api
+```
+
+Restart Vite after changing `.env.local`.
+
+## Demo Session: Test the Backend Through the Frontend
+
+This is the recommended sequence to show during a demo:
+
+1. Confirm PostgreSQL is running:
+
+   ```powershell
+   docker compose ps
+   ```
+
+   The `neurovision-postgres` service should show `healthy`.
+
+2. Start FastAPI on port `8001` and start Vite on port `5173`.
+3. Open the frontend. An unauthenticated visitor is redirected to `/login`.
+4. Sign in with the demo email and password above.
+5. Confirm the dashboard opens and the signed-in doctor name appears in the top navigation.
+6. Open **Settings**.
+7. Change the name or email and select **Save profile**. The success message confirms the update was persisted through FastAPI and PostgreSQL.
+8. Refresh the browser. The saved profile should still be displayed.
+9. Enter the current password and a new password, then select **Change password**.
+10. Select the logout icon. The app should return to `/login` and remove the frontend token.
+11. Sign in again with the new password to prove password persistence.
+12. For repeatable demos, restore the documented password from Settings before finishing, or run the password change flow again with the current password.
+
+The dashboard, patient, analysis, history, and report content is still mock frontend data. The login, logout, `/me`, profile, and password operations are the live backend-connected portion.
+
+## API Port Override
+
+If port `8001` is unavailable, start FastAPI on another port, for example:
+
+```powershell
+uvicorn app.main:app --reload --port 8002
+```
+
+Before starting or restarting Vite, create a frontend `.env.local` file in the repository root:
+
+```text
+VITE_API_URL=http://localhost:8002/api
+```
+
+Then run `npm run dev` again. `.env.local` is ignored by Git through the existing `*.local` rule.
+
+## API Endpoints
+
+All routes are under `/api` unless noted. Protected routes require `Authorization: Bearer <access_token>`.
+
+| Method | Endpoint                 | Purpose                                            |
+| ------ | ------------------------ | -------------------------------------------------- |
+| GET    | `/health`                | API health check                                   |
+| POST   | `/api/auth/login`        | Validate credentials and issue a JWT               |
+| POST   | `/api/auth/logout`       | End the frontend authentication session            |
+| GET    | `/api/auth/me`           | Return the authenticated user                      |
+| GET    | `/api/settings/profile`  | Read the authenticated user's profile              |
+| PUT    | `/api/settings/profile`  | Update the user's name and email                   |
+| PUT    | `/api/settings/password` | Verify the current password and save a bcrypt hash |
+
+Password fields are never returned in API responses.
+
+## Database Commands
+
+Run these from `backend/` with the virtual environment active:
+
+```powershell
+alembic upgrade head
+python seed.py
+```
+
+Docker lifecycle commands run from the repository root:
+
+```powershell
+docker compose up -d
+docker compose ps
+docker compose logs postgres
+docker compose down       # Stop PostgreSQL and keep the volume
+docker compose down -v    # Stop PostgreSQL and delete all database data
+```
+
+### View Saved Database Data
+
+The PostgreSQL server runs inside Docker. Use `docker exec` to inspect it; PostgreSQL does not need to be installed on the host machine.
+
+Check the container:
+
+```powershell
+docker compose ps
+```
+
+Open a PostgreSQL shell inside the container:
+
+```powershell
+docker exec -it neurovision-postgres psql -U postgres -d neurovision
+```
+
+Then run SQL commands at the `neurovision=#` prompt:
+
+```sql
+\dt
+SELECT id, name, email, role, created_at, updated_at FROM users;
+\q
+```
+
+Or run a query directly from PowerShell without opening an interactive shell:
+
+```powershell
+docker exec neurovision-postgres psql -U postgres -d neurovision -c "SELECT id, name, email, role, created_at, updated_at FROM users;"
+```
+
+The `users` table stores the profile and a bcrypt password hash. Plain-text passwords are never stored or returned. The JWT is stored only in the browser. Dashboard, patient, analysis, history, and report records are currently mock frontend data and are not stored in PostgreSQL yet.
+
+## Frontend Commands
+
+Run these from the repository root:
+
+```powershell
+npm run dev
+npm run lint
+npm run build
+npm run preview
+```
+
+## Project Structure
+
+```text
+backend/
+├── app/
+│   ├── core/security.py
+│   ├── dependencies/auth.py
+│   ├── models/user.py
+│   ├── routers/auth.py
+│   ├── routers/settings.py
+│   ├── schemas/auth.py
+│   ├── schemas/user.py
+│   ├── services/auth_service.py
+│   └── main.py
+├── alembic/
+├── alembic.ini
+├── requirements.txt
+└── seed.py
+src/
+├── context/              # Frontend authentication state
+├── pages/Login.jsx       # Login screen
+├── pages/Settings.jsx    # Profile and password forms
+└── services/api.js       # Fetch wrapper and token handling
+```
+
+## Environment Variables
+
+Copy `.env.example` to `.env` for local backend configuration:
+
+```text
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/neurovision
+JWT_SECRET=change-this-secret
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+CORS_ORIGINS=http://localhost:5173
+```
+
+Use a strong, private `JWT_SECRET` outside development.
 
 ## Disclaimer
 
-NeuroVision AI is a demonstration and clinical decision-support frontend. Its predictions, assessments, mock data, and generated reports are for development and demonstration purposes only. AI-generated results should support, not replace, evaluation and judgment by qualified healthcare professionals. The application is not a diagnostic device and is not connected to a clinical backend or patient record system.
+NeuroVision AI is a demonstration and clinical decision-support application. Its mock predictions are not medical advice, a diagnosis, or a clinical device.
