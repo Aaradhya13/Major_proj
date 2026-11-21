@@ -1,10 +1,7 @@
 import {
   ArrowUpRight,
   BrainCircuit,
-  CalendarClock,
-  CheckCircle2,
   ClipboardList,
-  FileClock,
   Gauge,
   Hospital,
   ScanLine,
@@ -12,41 +9,14 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import hospitalNeuralBg from '../assets/hospital-neural-bg.png'
 import RecentActivity from '../components/dashboard/RecentActivity.jsx'
 import RecentPredictions from '../components/dashboard/RecentPredictions.jsx'
 import StageDistribution from '../components/dashboard/StageDistribution.jsx'
-
-const statistics = [
-  {
-    label: 'Total Patients',
-    value: '248',
-    trend: '+12 this month',
-    tone: 'blue',
-    icon: UsersRound,
-  },
-  {
-    label: 'MRI Analyses',
-    value: '1,842',
-    trend: '36 completed today',
-    tone: 'teal',
-    icon: ScanLine,
-  },
-  {
-    label: 'High Risk Cases',
-    value: '18',
-    trend: '4 awaiting review',
-    tone: 'rose',
-    icon: ShieldAlert,
-  },
-  {
-    label: 'AI Model Accuracy',
-    value: '94.7%',
-    trend: 'Validated cohort',
-    tone: 'emerald',
-    icon: Gauge,
-  },
-]
+import { useAuth } from '../context/useAuth.js'
+import { authApi } from '../services/api.js'
+import { toFrontendAnalysis } from '../utils/analysisAdapter.js'
 
 const statToneClasses = {
   blue: 'bg-slate-100/90 text-slate-700 ring-slate-200/80',
@@ -54,36 +24,6 @@ const statToneClasses = {
   rose: 'bg-rose-50 text-rose-700 ring-rose-100',
   emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
 }
-
-const careQueue = [
-  {
-    label: 'Critical review',
-    value: '4',
-    color: 'bg-rose-400',
-    width: '72%',
-    surface: 'bg-rose-50 text-rose-700 ring-rose-100',
-  },
-  {
-    label: 'Pending upload QC',
-    value: '7',
-    color: 'bg-amber-400',
-    width: '64%',
-    surface: 'bg-amber-50 text-amber-700 ring-amber-100',
-  },
-  {
-    label: 'Reports to sign',
-    value: '11',
-    color: 'bg-sky-500',
-    width: '58%',
-    surface: 'bg-sky-50 text-sky-700 ring-sky-100',
-  },
-]
-
-const teamLoad = [
-  { name: 'Neurology', value: 82 },
-  { name: 'Radiology', value: 68 },
-  { name: 'Memory Clinic', value: 54 },
-]
 
 function StatCard({ label, value, trend, tone, icon: Icon, index }) {
   return (
@@ -111,6 +51,58 @@ function StatCard({ label, value, trend, tone, icon: Icon, index }) {
 
 function Dashboard() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const [analyses, setAnalyses] = useState([])
+  const [dashboardStats, setDashboardStats] = useState(null)
+  const [dashboardError, setDashboardError] = useState('')
+
+  useEffect(() => {
+    authApi.getDashboardStats().then((stats) => {
+      setDashboardStats(stats)
+      setAnalyses(stats.recent_predictions.map(toFrontendAnalysis))
+    }).catch((requestError) => setDashboardError(requestError.message))
+  }, [])
+
+  const highRiskCount = dashboardStats?.high_risk_cases ?? 0
+  const patientCount = dashboardStats?.total_patients ?? 0
+  const todayCount = dashboardStats?.analyses_today ?? 0
+  const totalAnalyses = dashboardStats?.total_analyses ?? 0
+  const statistics = [
+    { label: 'Total Patients', value: patientCount, trend: 'Registered in PostgreSQL', tone: 'blue', icon: UsersRound },
+    { label: 'MRI Analyses', value: totalAnalyses, trend: `${todayCount} completed today`, tone: 'teal', icon: ScanLine },
+    { label: 'High-Risk Cases', value: highRiskCount, trend: 'Saved Demented screening results', tone: 'rose', icon: ShieldAlert },
+    { label: 'Analyses Today', value: todayCount, trend: 'Saved today in PostgreSQL', tone: 'emerald', icon: Gauge },
+  ]
+  const workflowMetrics = [
+    {
+      label: 'Total Analyses',
+      value: totalAnalyses,
+      detail: 'Saved MRI analysis records',
+      icon: ScanLine,
+      surface: 'bg-sky-50 text-sky-700 ring-sky-100',
+    },
+    {
+      label: 'Analyses Today',
+      value: todayCount,
+      detail: 'Records created today',
+      icon: BrainCircuit,
+      surface: 'bg-teal-50 text-teal-700 ring-teal-100',
+    },
+    {
+      label: 'High-Risk Cases',
+      value: highRiskCount,
+      detail: 'Demented stage 1 results',
+      icon: ShieldAlert,
+      surface: 'bg-rose-50 text-rose-700 ring-rose-100',
+    },
+    {
+      label: 'Total Patients',
+      value: patientCount,
+      detail: 'Registered patient records',
+      icon: UsersRound,
+      surface: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+    },
+  ]
 
   return (
     <div
@@ -119,6 +111,7 @@ function Dashboard() {
     >
       <div className="pointer-events-none absolute inset-0 bg-white/75" aria-hidden="true" />
       <div className="relative z-10 mx-auto max-w-7xl p-4 sm:p-5 lg:p-6">
+        {dashboardError && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{dashboardError}</div>}
         <section className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/60 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md">
           <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div className="relative overflow-hidden p-6 sm:p-8 lg:min-h-[25rem]">
@@ -135,7 +128,7 @@ function Dashboard() {
                 Neuro care command center
               </span>
               <h2 className="mt-5 max-w-3xl text-3xl font-bold tracking-tight text-blue-950 sm:text-5xl">
-                Good morning, Dr. Sarah
+                Good morning, {user?.name ?? 'Doctor'}
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
                 Monitor Alzheimer&apos;s MRI assessments, prioritize flagged
@@ -170,7 +163,7 @@ function Dashboard() {
               <div>
                 <p className="text-sm font-semibold text-blue-700">Today</p>
                 <p className="mt-1 text-3xl font-bold tracking-tight text-blue-950">
-                  36 analyses
+                  {todayCount} analyses
                 </p>
                 <p className="mt-1 text-xs font-medium text-slate-500">
                   Imaging workflow summary
@@ -181,22 +174,27 @@ function Dashboard() {
               </div>
             </div>
             <div className="relative mt-6 space-y-3">
-              {careQueue.map((item) => (
+              {workflowMetrics.slice(0, 3).map((item) => {
+                const Icon = item.icon
+                return (
                 <div key={item.label} className="rounded-lg border border-white/60 bg-white/60 p-3 shadow-[0_2px_8px_rgba(15,23,42,0.04)] backdrop-blur-md">
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="font-medium text-slate-700">{item.label}</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset ${item.surface}`}>
+                        <Icon size={17} aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-slate-700">{item.label}</p>
+                        <p className="mt-0.5 truncate text-xs text-slate-500">{item.detail}</p>
+                      </div>
+                    </div>
                     <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${item.surface}`}>
                       {item.value}
                     </span>
                   </div>
-                  <div className="mt-2 h-1.5 rounded-full bg-slate-200/50">
-                    <div
-                      className={`h-full rounded-full ${item.color}`}
-                      style={{ width: item.width }}
-                    />
-                  </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </aside>
           </div>
@@ -209,8 +207,8 @@ function Dashboard() {
         </section>
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.85fr)]">
-          <RecentPredictions />
-          <StageDistribution />
+          <RecentPredictions analyses={analyses} />
+          <StageDistribution analyses={analyses} stageDistribution={dashboardStats?.stage_distribution} totalAnalyses={totalAnalyses} />
         </section>
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
@@ -218,54 +216,40 @@ function Dashboard() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-blue-950">
-                Care Team Load
+                Analysis Overview
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                Active workload by service line
+                Database-backed MRI workflow totals
               </p>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">
-              <CheckCircle2 size={14} aria-hidden="true" />
-              Stable
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
+              <BrainCircuit size={14} aria-hidden="true" />
+              Live stats
             </span>
           </div>
 
-          <div className="mt-6 space-y-5">
-            {teamLoad.map((team) => (
-              <div key={team.name}>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-slate-700">{team.name}</span>
-                  <span className="font-semibold text-slate-900">{team.value}%</span>
-                </div>
-                <div className="mt-2 h-2 rounded-full bg-slate-100">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-blue-800 to-teal-500"
-                    style={{ width: `${team.value}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_3px_12px_rgba(15,23,42,0.04)] backdrop-blur-md">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <CalendarClock size={17} className="text-blue-800" aria-hidden="true" />
-                Next board review
+            {workflowMetrics.map((item) => {
+              const Icon = item.icon
+              return (
+            <div key={item.label} className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_3px_12px_rgba(15,23,42,0.04)] backdrop-blur-md">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-900">
+                  <Icon size={17} className="shrink-0 text-blue-800" aria-hidden="true" />
+                  <span className="truncate">{item.label}</span>
+                </div>
+                <span className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${item.surface}`}>
+                  {item.value}
+                </span>
               </div>
-              <p className="mt-1 text-sm text-slate-500">Today, 14:30</p>
+              <p className="mt-1 text-sm text-slate-500">{item.detail}</p>
             </div>
-            <div className="rounded-lg border border-white/60 bg-white/60 px-4 py-3 shadow-[0_3px_12px_rgba(15,23,42,0.04)] backdrop-blur-md">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <FileClock size={17} className="text-blue-800" aria-hidden="true" />
-                Median report time
-              </div>
-              <p className="mt-1 text-sm text-slate-500">18 min after scan</p>
-            </div>
+              )
+            })}
           </div>
           </article>
 
-          <RecentActivity />
+          <RecentActivity analyses={analyses} />
         </section>
       </div>
     </div>

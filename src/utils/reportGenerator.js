@@ -58,24 +58,54 @@ export function createPdfReport({
     `Patient ID: ${patientId}`,
     `Analysis ID: ${analysisId}`,
     `Analysis Date: ${analysisDate}`,
-    `Predicted Alzheimer's Stage: ${stage}`,
-    `Confidence: ${confidence.toFixed(1)}%`,
     `Status: ${analysis?.status ?? 'Reviewed'}`,
-    '',
-    'Stage Probability Breakdown',
-    ...probabilities.map(
-      (item) => `${item.stage}: ${item.probability.toFixed(1)}%`,
-    ),
-    '',
-    'AI Assessment',
-    ...wrapReportText(
-      `The AI analysis detected patterns consistent with a ${stage} stage. The result suggests early structural changes and should be considered alongside clinical evaluation and patient history.`,
-    ),
-    '',
     `MRI Scan: ${analysis?.file?.name ?? 'Unavailable'}`,
-    '',
-    'Disclaimer: This is an AI-assisted result intended to support, not replace, clinical judgment.',
   ]
+
+  if (analysis?.modelPrediction) {
+    reportLines.push(
+      '',
+      `Final prediction: ${analysis.finalPrediction ?? stage}`,
+      `Stage 1 screening: ${analysis.stage1Prediction ?? 'Unavailable'}`,
+      `Stage 1 decision score: ${analysis.stage1DecisionScore ?? 'Unavailable'}`,
+      `Stage 2 severity: ${analysis.stage2Prediction ?? 'Not run'}`,
+      `Stage 2 decision score: ${analysis.stage2DecisionScore ?? 'Not run'}`,
+      '',
+      'Model score note',
+      'Decision scores are raw SVM decision scores. They are not calibrated probabilities or confidence percentages.',
+      '',
+      'Clinical notes',
+      ...wrapReportText(analysis.notes ?? 'No clinical notes provided.'),
+      '',
+      'AI Assessment',
+      ...wrapReportText(
+        `The model returned ${analysis.finalPrediction ?? stage}. This is an AI-based decision-support result and should be considered alongside clinical evaluation and patient history.`,
+      ),
+    )
+  } else {
+    reportLines.push(
+      `Predicted Alzheimer's Stage: ${stage}`,
+      `Confidence: ${confidence.toFixed(1)}%`,
+      '',
+      'Stage Probability Breakdown',
+      ...probabilities.map(
+        (item) => `${item.stage}: ${item.probability.toFixed(1)}%`,
+      ),
+      '',
+      'AI Assessment',
+      ...wrapReportText(
+        `The AI analysis detected patterns consistent with a ${stage} stage. The result suggests early structural changes and should be considered alongside clinical evaluation and patient history.`,
+      ),
+      '',
+      'Clinical notes',
+      ...wrapReportText(analysis?.notes ?? 'No clinical notes provided.'),
+    )
+  }
+
+  reportLines.push(
+    '',
+    'Disclaimer: This is an AI-assisted decision-support result intended to support, not replace, clinical judgment. It is not a medical diagnosis.',
+  )
   const contentLines = ['BT', '/F1 18 Tf', '50 750 Td']
 
   reportLines.forEach((line, index) => {

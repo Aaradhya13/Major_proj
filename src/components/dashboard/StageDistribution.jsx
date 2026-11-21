@@ -1,5 +1,4 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
-import { stageDistribution } from '../../data/mockData.js'
 
 const stageColors = {
   Normal: '#059669',
@@ -8,16 +7,18 @@ const stageColors = {
   Moderate: '#e11d48',
 }
 
-const totalCases = stageDistribution.reduce(
-  (total, stage) => total + stage.count,
-  0,
-)
+function StageDistribution({ analyses, stageDistribution: savedDistribution, totalAnalyses }) {
+  const stageDistribution = savedDistribution ?? ['Normal', 'Very Mild', 'Mild', 'Moderate'].map((stage) => ({
+    stage,
+    count: analyses.filter((analysis) => analysis.predictedStage === stage).length,
+  }))
+  const totalCases = totalAnalyses ?? analyses.length
+  const hasAnalyses = totalCases > 0
 
-function getPercentage(count) {
-  return Math.round((count / totalCases) * 100)
-}
+  function getPercentage(count) {
+    return totalCases ? Math.round((count / totalCases) * 100) : 0
+  }
 
-function StageDistribution() {
   return (
     <section className="dashboard-card-rise flex h-full min-h-64 flex-col rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
       <div>
@@ -29,7 +30,7 @@ function StageDistribution() {
         </p>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6 sm:flex-row sm:gap-8 xl:flex-col 2xl:flex-row">
+      {hasAnalyses ? <div className="flex flex-1 flex-col items-center justify-center gap-6 py-6 sm:flex-row sm:gap-8 xl:flex-col 2xl:flex-row">
         <div className="relative h-52 w-full max-w-[13rem] shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -84,7 +85,7 @@ function StageDistribution() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> : <div className="flex flex-1 items-center justify-center py-10 text-sm text-slate-500">No analyses yet.</div>}
     </section>
   )
 }

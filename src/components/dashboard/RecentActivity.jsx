@@ -7,7 +7,6 @@ import {
   UserPlus,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { recentActivities } from '../../data/mockData.js'
 
 const activityIcons = {
   'analysis-completed': Brain,
@@ -25,8 +24,15 @@ const activityIconStyles = {
   'report-generated': 'bg-amber-50 text-amber-700',
 }
 
-function RecentActivity() {
+function RecentActivity({ analyses }) {
   const navigate = useNavigate()
+  const recentActivities = analyses.slice(0, 5).map((analysis) => ({
+    id: analysis.id,
+    type: analysis.stage1Class === 1 ? 'high-risk-detected' : 'analysis-completed',
+    title: analysis.stage1Class === 1 ? 'Demented Screening Result' : 'MRI Analysis Completed',
+    description: `${analysis.patientDetails.name}: ${analysis.finalPrediction}`,
+    timestamp: analysis.date,
+  }))
 
   return (
     <section className="dashboard-card-rise rounded-xl border border-white/60 bg-white/60 p-6 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md sm:p-7">
@@ -50,7 +56,7 @@ function RecentActivity() {
       </div>
 
       <ul className="mt-6">
-        {recentActivities.map((activity, index) => {
+        {recentActivities.length === 0 ? <li className="py-8 text-sm text-slate-500">No recent activity.</li> : recentActivities.map((activity, index) => {
           const Icon = activityIcons[activity.type]
 
           return (

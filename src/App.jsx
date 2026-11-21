@@ -11,6 +11,7 @@ import Patients from './pages/Patients.jsx'
 import PredictionResult from './pages/PredictionResult.jsx'
 import Reports from './pages/Reports.jsx'
 import Settings from './pages/Settings.jsx'
+import ClinicalFeedback from './pages/ClinicalFeedback.jsx'
 import Login from './pages/Login.jsx'
 
 function App() {
@@ -32,6 +33,11 @@ function App() {
           <Route path="analysis/:id" element={<PredictionResult />} />
           <Route path="history" element={<History />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="clinical-feedback" element={<ClinicalFeedback />} />
+          <Route
+            path="feedback"
+            element={<Navigate to="/clinical-feedback" replace />}
+          />
           <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<NotFound />} />

@@ -1,6 +1,9 @@
 import { ArrowLeft, Eye, Plus } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { analysisHistory, patients } from '../data/mockData.js'
+import { authApi } from '../services/api.js'
+import { toFrontendAnalysis } from '../utils/analysisAdapter.js'
+import { toFrontendPatient } from '../utils/patientAdapter.js'
 
 const stageStyles = {
   Normal: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -46,10 +49,25 @@ function InfoCard({ label, value, stage }) {
 function PatientDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const patient = patients.find((item) => item.id === id)
-  const patientAnalyses = analysisHistory.filter(
-    (analysis) => analysis.patientId === id,
-  )
+  const [patient, setPatient] = useState(null)
+  const [patientAnalyses, setPatientAnalyses] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    Promise.all([authApi.getPatient(id), authApi.getPatientAnalyses(id)]).then(([patientRecord, records]) => {
+      setPatient(toFrontendPatient(patientRecord))
+      setPatientAnalyses(records.map(toFrontendAnalysis))
+    }).catch((requestError) => setError(requestError.message)).finally(() => setIsLoading(false))
+  }, [id])
+
+  if (isLoading) {
+    return <div className="mx-auto max-w-7xl py-16 text-center text-sm text-slate-500">Loading patient...</div>
+  }
+
+  if (error) {
+    return <div className="mx-auto max-w-7xl py-16 text-center text-sm text-red-700" role="alert">{error}</div>
+  }
 
   if (!patient) {
     return (
@@ -129,7 +147,7 @@ function PatientDetails() {
           </div>
 
           <div className="mt-5">
-            {patientAnalyses.map((analysis, index) => (
+            {isLoading ? <p className="py-8 text-sm text-slate-500">Loading analyses...</p> : error ? <p className="py-8 text-sm text-red-700" role="alert">{error}</p> : patientAnalyses.length === 0 ? <p className="py-8 text-sm text-slate-500">No analyses yet.</p> : patientAnalyses.map((analysis, index) => (
               <div
                 key={analysis.id}
                 className={`flex items-center gap-3 py-4 transition-colors hover:bg-slate-50/80 sm:gap-4 ${index === 0 ? '' : 'border-t border-slate-100'}`}
@@ -145,7 +163,7 @@ function PatientDetails() {
                       {analysis.predictedStage}
                     </span>
                     <span className="text-xs font-medium text-slate-500">
-                      {analysis.confidence.toFixed(1)}% Confidence
+                      Decision score: {analysis.stage1DecisionScore.toFixed(4)}
                     </span>
                   </div>
                 </div>

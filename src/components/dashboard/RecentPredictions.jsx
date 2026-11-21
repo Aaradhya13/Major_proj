@@ -1,6 +1,5 @@
 import { ArrowRight, Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { recentPredictions } from '../../data/mockData.js'
 
 const stageStyles = {
   Normal: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
@@ -17,7 +16,7 @@ function getInitials(patientName) {
     .slice(0, 2)
 }
 
-function RecentPredictions() {
+function RecentPredictions({ analyses }) {
   const navigate = useNavigate()
 
   return (
@@ -42,7 +41,7 @@ function RecentPredictions() {
       </div>
 
       <div className="mt-6 flex-1 overflow-hidden rounded-lg border border-slate-100">
-        {recentPredictions.slice(0, 5).map((prediction, index) => (
+        {analyses.length === 0 ? <p className="p-5 text-sm text-slate-500">No analyses yet.</p> : analyses.slice(0, 5).map((prediction, index) => (
           <div
             key={prediction.id}
             className={`group flex min-h-20 items-center gap-3 px-3 py-4 transition-all duration-300 hover:bg-sky-50/70 sm:gap-4 ${
@@ -51,11 +50,11 @@ function RecentPredictions() {
           >
             <div className="flex min-w-0 flex-1 items-center gap-3">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-900 ring-1 ring-inset ring-blue-100 transition-transform duration-300 group-hover:scale-110">
-                {getInitials(prediction.patientName)}
+                {getInitials(prediction.patientDetails.name)}
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-slate-800 sm:text-[15px]">
-                  {prediction.patientName}
+                  {prediction.patientDetails.name}
                 </p>
                 <p className="mt-1 truncate text-xs text-slate-400">
                   {prediction.patientId}
@@ -70,19 +69,19 @@ function RecentPredictions() {
                 {prediction.predictedStage}
               </span>
               <p className="mt-1.5 text-xs font-medium text-slate-500">
-                {prediction.confidence.toFixed(1)}% confidence
+                Score: {prediction.stage1DecisionScore.toFixed(4)}
               </p>
             </div>
 
             <div className="hidden w-32 shrink-0 text-sm text-slate-600 md:block">
-              {prediction.analysisDate}
+              {prediction.date}
             </div>
 
             <button
               type="button"
               onClick={() => navigate(`/analysis/${prediction.id}`)}
-              aria-label={`View ${prediction.patientName} prediction`}
-              title={`View ${prediction.patientName} prediction`}
+              aria-label={`View ${prediction.patientDetails.name} prediction`}
+              title={`View ${prediction.patientDetails.name} prediction`}
               className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-blue-800 transition-colors hover:bg-blue-50 hover:text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-1"
             >
               <Eye size={18} strokeWidth={2} aria-hidden="true" />

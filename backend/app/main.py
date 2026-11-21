@@ -1,11 +1,29 @@
+from contextlib import asynccontextmanager
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth, settings as settings_router
+from app.ml.service import MLInferenceService
+from app.routers import analysis, auth, dashboard, patients, settings as settings_router
 
 
-app = FastAPI(title="NeuroVision AI API", version="0.1.0")
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        app.state.ml_service = MLInferenceService(settings.resolved_ml_model_dir)
+        logger.info("ML inference service loaded from %s", settings.resolved_ml_model_dir)
+    except Exception:
+        app.state.ml_service = None
+        logger.exception("ML inference service could not be loaded")
+    yield
+
+
+app = FastAPI(title="NeuroVision AI API", version="0.1.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
@@ -16,6 +34,9 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(settings_router.router, prefix="/api")
+app.include_router(analysis.router, prefix="/api")
+app.include_router(patients.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")
 
 
 @app.get("/health")

@@ -5,6 +5,7 @@ import {
   History,
   LayoutDashboard,
   LogOut,
+  MessageSquareCheck,
   ScanLine,
   Search,
   Settings,
@@ -18,6 +19,7 @@ const navigationItems = [
   { label: 'New Analysis', path: '/analysis/new', icon: ScanLine },
   { label: 'Prediction History', path: '/history', icon: History },
   { label: 'Reports', path: '/reports', icon: FileBarChart },
+  { label: 'Clinical Feedback', path: '/clinical-feedback', icon: MessageSquareCheck },
   { label: 'Settings', path: '/settings', icon: Settings },
 ]
 
